@@ -3,9 +3,6 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { IReddit } from "../../models/reddit.model";
 
-// const Container = styled.div`
-//   max-height: 1430px;
-// `;
 
 const RedditItemContainer = styled.div`
   width: 688px;
@@ -20,14 +17,15 @@ const RedditItemContainer = styled.div`
   }
 `;
 
-const RedditTitle = styled.p`
+const RedditTitle = styled(Link)`
   margin: 0;
   font-size: 24px;
   font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
+  display: block;
+  color: #263d52;
+  text-decoration: none;
+  word-break: break-word;
   text-align: left;
-  text-overflow: ellipsis;
 `;
 
 const MetaInfo = styled.section`
@@ -55,6 +53,10 @@ const Points = styled.span`
   margin-left: 15px;
   font-size: 18px;
   line-height: 22px;
+  .points {
+    margin-left: 5px;
+    font-weight: normal;
+  }
   &::before {
     content: "";
     position: absolute;
@@ -69,12 +71,21 @@ const Points = styled.span`
 `;
 
 export default function RedditListItem({ reddit }: { reddit: IReddit }) {
+  const redditLink = `//www.reddit.com${reddit.permalink}`;
+
   return (
     <RedditItemContainer>
-      <RedditTitle>{reddit.title}</RedditTitle>
+      <RedditTitle to={redditLink} target="_blank" rel="noopener noreferrer">
+        {reddit.title}{" "}
+      </RedditTitle>
       <MetaInfo>
-        <SubReddit to={`/details/${reddit.subRedditName}`}>{reddit.subReddit}</SubReddit>
-        <Points>{reddit.points}</Points>
+        <SubReddit to={`/details/${reddit.subRedditName}`}>
+          {reddit.subReddit}
+        </SubReddit>
+        <Points>
+          {reddit.points.toLocaleString("de")}
+          <span className="points">points</span>
+        </Points>
       </MetaInfo>
     </RedditItemContainer>
   );

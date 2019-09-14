@@ -1,20 +1,30 @@
 import React, { useReducer, createContext } from "react";
+import styled from 'styled-components';
 import "./App.css";
 import RedditsList from "./components/RedditsList/RedditsList";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import RedditDetails from "./components/RedditDetails/RedditDetails";
-import { RedditsState, IReddit, IAction, ActionsTypes } from "./models/reddit.model";
-
-
-
+import {
+  RedditsState,
+  IReddit,
+  IAction,
+  ActionsTypes,
+  ISubReddit
+} from "./models/reddit.model";
+const  Container = styled.div`
+  width: 688px;
+  margin: 0 auto;
+`;
 const initialState: RedditsState = {
   reddits: [],
   isLoading: false,
-  error: false
+  error: false,
+  subReddits: {}
 };
 
 interface IRawReddit {
   title: string;
+  permalink: string;
   id: string;
   score: number;
   subreddit_id: string;
@@ -28,19 +38,30 @@ export function parseFetchedData(reddits: any[]): IReddit[] {
       title,
       id,
       score: points,
+      permalink,
       subreddit_id: subRedditId,
       subreddit: subRedditName,
       subreddit_name_prefixed: subReddit
-    }: IRawReddit  = data;
+    }: IRawReddit = data;
     return {
       subRedditId,
       subRedditName,
       title,
       id,
+      permalink,
       points,
       subReddit
     };
   });
+}
+
+export function parseFetchedSubreddit(subReddit: {[key: string] : string | number}): ISubReddit {
+  return {
+    title: subReddit.title as string,
+    description: subReddit.public_description as string,
+    subscribers: subReddit.subscribers as number,
+    prefixedName: subReddit.display_name_prefixed as string
+  }
 }
 
 export const StateContext = createContext({
@@ -52,9 +73,12 @@ const reducer = (state: RedditsState, action: IAction) => {
   switch (action.type) {
     case ActionsTypes.REDDITS_FETCHING:
       return { ...state, isLoading: true };
-    case ActionsTypes.REDDITS_FETCHED:      
+    case ActionsTypes.REDDITS_FETCHED:
       const parsedReddits = parseFetchedData(action.payload.data.children);
       return { ...state, isLoading: false, reddits: parsedReddits };
+    case ActionsTypes.SUB_REDDIT_FETCHED:
+      const subReddit = parseFetchedSubreddit(action.payload.data);
+      return { ...state, isLoading: false, subReddits: { ...state.subReddits, [action.payload.data.display_name]: subReddit} };
     default:
       return state;
   }
@@ -62,15 +86,18 @@ const reducer = (state: RedditsState, action: IAction) => {
 
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  
 
   return (
     <StateContext.Provider value={{ state, dispatch }}>
       <Router>
-        <div className="App">
+        <Container>
           <Route path="/" exact component={RedditsList} />
-          <Route path="/details/:redditId" exact component={RedditDetails} />
-        </div>
+          <Route
+            path="/details/:subRedditName"
+            exact
+            component={RedditDetails}
+          />
+        </Container>
       </Router>
     </StateContext.Provider>
   );

@@ -16,12 +16,21 @@ export enum ActionsTypes {
     title: string;
     id: string;
     subReddit: string;
+    permalink: string;
     points: number;
     subRedditName: string;
+  }
+
+  export interface ISubReddit {
+    title: string;
+    description: string;
+    subscribers: number;
+    prefixedName: string;   
   }
   
   export interface RedditsState {
     reddits: any[];
+    subReddits: {[key: string]: ISubReddit},
     isLoading: boolean;
     error: boolean;
   }
