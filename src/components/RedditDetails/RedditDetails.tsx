@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { RouteComponentProps } from "react-router";
 import { subRedditInfoUrl } from "../../constants/api";
 import { fetchData } from "../../utils/fetchData";
 import { ActionsTypes, ISubReddit } from "../../models/reddit.model";
@@ -15,8 +16,6 @@ import {
   InfoKey,
   InfoValue
 } from "./RedditDetails.style";
-import { RouteComponentProps } from "react-router";
-import { SubReddit } from "../RedditListItem/RedditListItem.style";
 
 const subRedditActions: ActionsTypes[] = [
   ActionsTypes.SUB_REDDIT_FETCHING,
@@ -56,7 +55,7 @@ export default function RedditDetails({
     return <ErrorMessage>Oops... Network error!</ErrorMessage>;
   }
   if (isLoading) {
-    return <LoadingMessage data-test="loading">...Loading...</LoadingMessage>;
+    return <LoadingMessage>...Loading...</LoadingMessage>;
   }
   if (!subReddit) {
     return null;

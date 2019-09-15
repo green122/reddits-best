@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-
 import { IReddit } from "../../models/reddit.model";
 import {
   RedditItemContainer,
@@ -8,13 +7,12 @@ import {
   SubReddit,
   Points
 } from "./RedditListItem.style";
+import { redditLink } from "../../constants/api";
 
 export function RedditListItem({ reddit }: { reddit: IReddit }) {
-  const redditLink = `//www.reddit.com${reddit.permalink}`;
-
   return (
     <RedditItemContainer>
-      <RedditTitle to={redditLink} target="_blank" rel="noopener noreferrer">
+      <RedditTitle to={redditLink(reddit.permalink)} target="_blank" rel="noopener noreferrer">
         {reddit.title}{" "}
       </RedditTitle>
       <MetaInfo>
@@ -22,7 +20,7 @@ export function RedditListItem({ reddit }: { reddit: IReddit }) {
           {reddit.subReddit}
         </SubReddit>
         <Points>
-          {reddit.points.toLocaleString("de")}
+          {reddit.points && reddit.points.toLocaleString("de")}
           <span className="points">points</span>
         </Points>
       </MetaInfo>

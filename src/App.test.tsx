@@ -25,7 +25,7 @@ describe("reducer", () => {
     });
     expect(resultedState.isLoading).toBeTruthy();
   });
-  it("should handle reddits fetching action", () => {
+  it("should handle sub reddit fetching action", () => {
     const resultedState = reducer(initialState, {
       type: ActionsTypes.SUB_REDDIT_FETCHING
     });
@@ -88,7 +88,7 @@ describe("reducer", () => {
     });
     expect(resultedState.reddits).toEqual(expected);
   });
-  it("should handle sub reddits fetched action", () => {
+  it("should handle sub reddit fetched action", () => {
     const mockServerData = {
       data: {
         display_name: "fakename",

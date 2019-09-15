@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as BackIconSVG } from "../../assets/Back.svg";
-import { Blue400, Gray500, Blue700 } from "../../constants/colors";
+import { Blue400, Gray500, Blue700, Blue600 } from "../../constants/colors";
 
 export const DetailsContainer = styled.div`
   font-family: Inter;
@@ -37,10 +37,11 @@ export const BackToHome = styled(Link)`
 `;
 
 export const SubRedditHeader = styled.h2`
+  word-break: break-all;
   font-weight: 900;
   font-size: 48px;
   line-height: 52px;
-  color: #263d52;
+  color: ${Blue700};
   @media (max-width: 600px) {
     font-size: 42px;
     line-height: 47px;
@@ -56,6 +57,7 @@ export const SubHeader = styled.p`
   @media (max-width: 600px) {
     font-size: 22px;
     line-height: 27px;
+    margin-bottom: 49px;
   }
 `;
 
@@ -76,7 +78,7 @@ export const InfoValue = styled.p`
   font-weight: normal;
   font-size: 20px;
   line-height: 29px;
-  color: #25496e;
+  color: ${Blue600} ;
   @media (max-width: 600px) {
     font-size: 18px;
     line-height: 26px;
@@ -88,6 +90,9 @@ export const InfoBlock = styled.section`
     margin-bottom: 44px;
   }
   transition: all 0.5s ease-out;
+  @media (max-width: 600px) {
+    margin-bottom: 35px;
+  }
 `;
 
 export const BackIcon = styled(BackIconSVG)`

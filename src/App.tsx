@@ -14,6 +14,8 @@ import {
   IRawReddit,
   IAPIResponse
 } from "./models/reddit.model";
+
+
 const Container = styled.div`
   width: 688px;
   margin: 0 auto 50px;
@@ -89,7 +91,6 @@ export const reducer = (state: RedditsState, action: IAction) => {
       const subRedditName = get(fetchedData, "display_name");
       if (fetchedData && subRedditName) {
         const subReddit = parseFetchedSubreddit(fetchedData);
-
         return {
           ...state,
           isLoading: false,

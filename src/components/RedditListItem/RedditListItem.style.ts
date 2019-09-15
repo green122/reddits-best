@@ -48,7 +48,7 @@ export const MetaInfo = styled.section`
   display: inline-block;
   margin-top: 12px;
   font-size: 18px;
-  line-height: 22px;
+  line-height: 22px;  
   @media (max-width: 600px) {
     font-size: 16px;
     line-height: 19px;
@@ -58,6 +58,7 @@ export const MetaInfo = styled.section`
 export const SubReddit = styled(Link)`
   color: ${Blue400};
   font-family: Inter;
+  text-decoration: none;
   font-style: normal;
   font-weight: bold;
 `;
