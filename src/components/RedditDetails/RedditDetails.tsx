@@ -1,12 +1,21 @@
-import React, { useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import { StateContext } from "../../App";
+import React, { useEffect } from "react";
 import { subRedditInfoUrl } from "../../constants/api";
-import { useFetch } from "../../hooks/fetch.hook";
+import { fetchData } from "../../utils/fetchData";
 import { ActionsTypes, ISubReddit } from "../../models/reddit.model";
-import { ReactComponent as BackIconSVG } from "../../assets/Back.svg";
 import { useStoreSelector, useDispatch } from "../../hooks/useStore.hook";
+import {
+  ErrorMessage,
+  LoadingMessage,
+  DetailsContainer,
+  BackToHome,
+  BackIcon,
+  SubRedditHeader,
+  SubHeader,
+  InfoBlock,
+  InfoKey,
+  InfoValue
+} from "./RedditDetails.style";
+import { RouteComponentProps } from "react-router";
 
 const subRedditActions: ActionsTypes[] = [
   ActionsTypes.SUB_REDDIT_FETCHING,
@@ -14,102 +23,53 @@ const subRedditActions: ActionsTypes[] = [
   ActionsTypes.SUB_REDDIT_ERROR
 ];
 
-const BackToHome = styled(Link)`
-  font-family: Inter;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 22px;
-  line-height: 27px;
-  color: #4583c2;
-`;
-
-const SubRedditHeader = styled.h2`
-  font-weight: 900;
-  font-size: 48px;
-  line-height: 52px;
-  color: #263d52;
-`;
-
-const SubHeader = styled.h5`
-  font-weight: bold;
-  font-size: 26px;
-  line-height: 31px;
-  color: #8a95a5;
-`;
-
-const InfoKey = styled.h6`
-  font-weight: bold;
-  font-size: 26px;
-  line-height: 35px;
-  color: #263d52;
-`;
-
-const InfoValue = styled.p`
-  font-style: normal;
-  font-weight: normal;
-  font-size: 20px;
-  line-height: 29px;
-  color: #25496e;
-`;
-
-const InfoBlock = styled.section`
-  &:not(:last-child) {
-    margin-bottom: 44px;
-  }
-`;
-
-const BackIcon = styled(BackIconSVG)`
-  fill: #4583c2;
-`;
-
-export default function RedditDetails(props: any) {
-  const { subRedditName } = props.match.params;
+export default function RedditDetails({
+  match
+}: RouteComponentProps<{ subRedditName: string }>) {
+  const { subRedditName } = match.params;
   const isLoading: boolean = useStoreSelector(state => state.isLoading);
+  const isError: boolean = useStoreSelector(state => state.error);
   const subReddit: ISubReddit = useStoreSelector(
     state => state.subReddits[subRedditName]
   );
   const dispatch = useDispatch();
-
+  const isLoaded = Boolean(subReddit);
   useEffect(() => {
-    if (isLoading || Boolean(subReddit)) {
+    if (isLoading || isLoaded || isError) {
       return;
     }
-
-    let cancelled = false;
-    dispatch({ type: ActionsTypes.SUB_REDDIT_FETCHING });
-    const fetchFunction = async () => {
-      try {
+    return fetchData(
+      async () => {
         const data = await fetch(subRedditInfoUrl(subRedditName));
         const parsed = await data.json();
-        if (!cancelled) {
-          dispatch({ type: ActionsTypes.SUB_REDDIT_FETCHED, payload: parsed });
-        }
-      } catch (error) {
-        if (!cancelled) {
-          dispatch({ type: ActionsTypes.SUB_REDDIT_ERROR, payload: error });
-        }
-      }
-    };
-
-    fetchFunction();
-    return () => {
-      cancelled = true;
-    };
-  }, [dispatch, subReddit]);
+        return parsed;
+      },
+      dispatch,
+      subRedditActions
+    );
+  }, [dispatch, isLoaded, isLoading, isError, subRedditName]);
 
   const { title, prefixedName, description, subscribers } = subReddit || {};
+
+  if (isError) {
+    return <ErrorMessage>Oops... Network error!</ErrorMessage>;
+  }
+  if (isLoading) {
+    return <LoadingMessage data-test="loading">...Loading...</LoadingMessage>;
+  }
+  if (!subReddit) {
+    return null;
+  }
   return (
-    <div>
+    <DetailsContainer>
       <BackToHome to="/">
         <BackIcon />
         Home
       </BackToHome>
       <SubRedditHeader>
         {prefixedName}
-        <SubHeader>
-          Subreddit details
-        </SubHeader>
-        </SubRedditHeader>
+        <SubHeader>Subreddit details</SubHeader>
+      </SubRedditHeader>
       <InfoBlock>
         <InfoKey>Title</InfoKey>
         <InfoValue>{title}</InfoValue>
@@ -120,8 +80,8 @@ export default function RedditDetails(props: any) {
       </InfoBlock>
       <InfoBlock>
         <InfoKey>Subscriber counter</InfoKey>
-        <InfoValue>{subscribers}</InfoValue>
+        <InfoValue>{subscribers && subscribers.toLocaleString("de")}</InfoValue>
       </InfoBlock>
-    </div>
+    </DetailsContainer>
   );
 }

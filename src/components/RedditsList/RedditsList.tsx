@@ -5,8 +5,10 @@ import { StateContext } from "../../App";
 
 import { redditUrl } from "../../constants/api";
 import { amountOfReddits } from "../../constants/common";
-import { ActionsTypes } from "../../models/reddit.model";
+import { ActionsTypes, IReddit } from "../../models/reddit.model";
 import styled from "styled-components";
+import { fetchData } from "../../utils/fetchData";
+import { useStoreSelector } from "../../hooks/useStore.hook";
 
 const redditsFetchActions = [
   ActionsTypes.REDDITS_FETCHING,
@@ -21,6 +23,15 @@ const HomeTitle = styled.h1`
   line-height: 46px;
   color: #263d52;
   margin: 80px 0 0 24px;
+  @media (max-width: 600px) {
+    margin: 48px 0 0 16px;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  margin: 100px auto;
+  text-align: center;
 `;
 
 const HomeSubTitle = styled.h3`
@@ -30,40 +41,45 @@ const HomeSubTitle = styled.h3`
   line-height: 27px;
   color: #8a95a5;
   margin: 8px 0 38px 24px;
+  @media (max-width: 600px) {
+    margin: 8px 0 21px 16px;
+  }
 `;
 
 const ListContainer = styled.div`
-  width: auto;  
+  width: auto;
 `;
 
 export default function RedditsList() {
-  const { state, dispatch } = useContext(StateContext);
+  const { dispatch } = useContext(StateContext);
+  const isError: boolean = useStoreSelector(state => state.error);
+  const reddits: IReddit[] = useStoreSelector(state => state.reddits);
 
   useEffect(() => {
-    dispatch({ type: ActionsTypes.REDDITS_FETCHING });
-    const fetchFunction = async () => {
-      try {
+    fetchData(
+      async () => {
         const data = await fetch(redditUrl(amountOfReddits));
         const parsed = await data.json();
-
-        dispatch({ type: ActionsTypes.REDDITS_FETCHED, payload: parsed });
-      } catch (error) {
-        dispatch({ type: ActionsTypes.REDDITS_ERROR, payload: error });
-      }
-    };
-
-    fetchFunction();
+        return parsed;
+      },
+      dispatch,
+      redditsFetchActions
+    );
   }, [dispatch]);
 
   return (
     <Fragment>
       <HomeTitle>Home</HomeTitle>
       <HomeSubTitle>{`Top ${amountOfReddits} posts`}</HomeSubTitle>
-      <ListContainer>
-        {state.reddits.map(reddit => (
-          <RedditListItem reddit={reddit} />
-        ))}
-      </ListContainer>
+      {isError ? (
+        <ErrorMessage>Oops... Network error!</ErrorMessage>
+      ) : (
+        <ListContainer>
+          {reddits.map(reddit => (
+            <RedditListItem key={reddit.id} reddit={reddit} />
+          ))}
+        </ListContainer>
+      )}
     </Fragment>
   );
 }
