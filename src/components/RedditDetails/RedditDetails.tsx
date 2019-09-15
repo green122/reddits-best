@@ -16,6 +16,7 @@ import {
   InfoValue
 } from "./RedditDetails.style";
 import { RouteComponentProps } from "react-router";
+import { SubReddit } from "../RedditListItem/RedditListItem.style";
 
 const subRedditActions: ActionsTypes[] = [
   ActionsTypes.SUB_REDDIT_FETCHING,
@@ -76,7 +77,7 @@ export default function RedditDetails({
       </InfoBlock>
       <InfoBlock>
         <InfoKey>Public description</InfoKey>
-        <InfoValue>{description}</InfoValue>
+        <InfoValue data-testid="descr">{description}</InfoValue>
       </InfoBlock>
       <InfoBlock>
         <InfoKey>Subscriber counter</InfoKey>

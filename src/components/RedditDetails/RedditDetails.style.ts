@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as BackIconSVG } from "../../assets/Back.svg";
-import { BlueColor } from "../../constants/colors";
+import { Blue400, Gray500, Blue700 } from "../../constants/colors";
 
 export const DetailsContainer = styled.div`
+  font-family: Inter;
   margin-top: 64px;
   animation-name: appear;
   animation-duration: 0.4s;
@@ -16,8 +17,7 @@ export const DetailsContainer = styled.div`
     }
   }
   @media (max-width: 600px) {
-    margin-left: 16px;
-    margin-top: 43px;
+    margin: 43px 16px 16px 16px;
   }
 `;
 
@@ -29,7 +29,7 @@ export const BackToHome = styled(Link)`
   font-size: 22px;
   line-height: 27px;
   margin: 64px 0 24px 0;
-  color: #4583c2;
+  color: ${Blue400};
   text-decoration: none;
   @media (max-width: 600px) {
     margin-top: 0;
@@ -51,7 +51,7 @@ export const SubHeader = styled.p`
   font-weight: bold;
   font-size: 26px;
   line-height: 31px;
-  color: #8a95a5;
+  color: ${Gray500};
   margin: 8px 0 75px 0;
   @media (max-width: 600px) {
     font-size: 22px;
@@ -63,7 +63,7 @@ export const InfoKey = styled.h6`
   font-weight: bold;
   font-size: 26px;
   line-height: 35px;
-  color: #263d52;
+  color: ${Blue700};
   margin-bottom: 8px;
   @media (max-width: 600px) {
     font-size: 22px;
@@ -94,7 +94,7 @@ export const BackIcon = styled(BackIconSVG)`
   width: 8px;
   height: 16px;
   margin-right: 8px;
-  fill: #4583c2;
+  fill: ${Blue400};
 `;
 
 export const ErrorMessage = styled.div`
@@ -104,7 +104,7 @@ export const ErrorMessage = styled.div`
 `;
 
 export const LoadingMessage = styled.div`
-  color: ${BlueColor};
+  color: ${Blue400};
   margin: 200px auto;
   text-align: center;
 `;

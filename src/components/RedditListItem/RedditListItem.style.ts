@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { Blue700, Blue400 } from "../../constants/colors";
 
 export const RedditItemContainer = styled.div`
   width: auto;
-  background: #ffffff;
+  background: white;
   border: 1px solid #e2e7eb;
   box-sizing: border-box;
   border-radius: 4px;
@@ -13,16 +14,17 @@ export const RedditItemContainer = styled.div`
   animation-name: appear;
   @keyframes appear {
     from {
-        opacity: 0;
-      /* transform: scale(0); */
+      opacity: 0;
     }
     to {
-        opacity: 1;
-      /* transform: scale(1); */
+      opacity: 1;
     }
   }
   &:not(:last-child) {
     margin-bottom: 24px;
+    @media (max-width: 600px) {
+      margin-bottom: 1px;
+    }
   }
 `;
 
@@ -31,7 +33,7 @@ export const RedditTitle = styled(Link)`
   font-size: 24px;
   font-weight: bold;
   display: block;
-  color: #263d52;
+  color: ${Blue700};
   text-decoration: none;
   word-break: break-word;
   text-align: left;
@@ -54,7 +56,7 @@ export const MetaInfo = styled.section`
 `;
 
 export const SubReddit = styled(Link)`
-  color: #4583c2;
+  color: ${Blue400};
   font-family: Inter;
   font-style: normal;
   font-weight: bold;

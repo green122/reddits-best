@@ -34,3 +34,21 @@ export enum ActionsTypes {
     isLoading: boolean;
     error: boolean;
   }
+ 
+  export interface IRawReddit {
+    title: string;
+    permalink: string;
+    id: string;
+    score: number;
+    subreddit_id: string;
+    subreddit_name_prefixed: string;
+    subreddit: string;
+  }
+  
+  export interface IAPIResponse {
+    [key: string]: string | number;
+  }
+  export interface IRedditsResponse {
+    data: IRawReddit;
+  }
+  

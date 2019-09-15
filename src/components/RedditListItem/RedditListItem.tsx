@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 import { IReddit } from "../../models/reddit.model";
 import {
@@ -9,7 +9,7 @@ import {
   Points
 } from "./RedditListItem.style";
 
-export default function RedditListItem({ reddit }: { reddit: IReddit }) {
+export function RedditListItem({ reddit }: { reddit: IReddit }) {
   const redditLink = `//www.reddit.com${reddit.permalink}`;
 
   return (
@@ -29,3 +29,5 @@ export default function RedditListItem({ reddit }: { reddit: IReddit }) {
     </RedditItemContainer>
   );
 }
+
+export default memo(RedditListItem)

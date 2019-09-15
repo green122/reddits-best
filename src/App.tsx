@@ -1,7 +1,6 @@
 import React, { useReducer, createContext } from "react";
-import styled from 'styled-components';
-import "./App.css";
-import { get } from 'lodash';
+import styled from "styled-components";
+import { get } from "lodash";
 import RedditsList from "./components/RedditsList/RedditsList";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import RedditDetails from "./components/RedditDetails/RedditDetails";
@@ -10,34 +9,21 @@ import {
   IReddit,
   IAction,
   ActionsTypes,
-  ISubReddit
+  ISubReddit,
+  IRedditsResponse,
+  IRawReddit,
+  IAPIResponse
 } from "./models/reddit.model";
-const  Container = styled.div`
+const Container = styled.div`
   width: 688px;
   margin: 0 auto 50px;
   @media (max-width: 600px) {
     width: 100vw;
   }
 `;
-const initialState: RedditsState = {
-  reddits: [],
-  isLoading: false,
-  error: false,
-  subReddits: {}
-};
 
-interface IRawReddit {
-  title: string;
-  permalink: string;
-  id: string;
-  score: number;
-  subreddit_id: string;
-  subreddit_name_prefixed: string;
-  subreddit: string;
-}
-
-export function parseFetchedData(reddits: any[]): IReddit[] {
-  return reddits.map(({ data = {} }) => {
+export function parseFetchedData(reddits: IRedditsResponse[]): IReddit[] {
+  return reddits.map(({ data }) => {
     const {
       title,
       id,
@@ -59,14 +45,21 @@ export function parseFetchedData(reddits: any[]): IReddit[] {
   });
 }
 
-export function parseFetchedSubreddit(subReddit: {[key: string] : string | number}): ISubReddit {
+export function parseFetchedSubreddit(subReddit: IAPIResponse): ISubReddit {
   return {
     title: subReddit.title as string,
     description: subReddit.public_description as string,
     subscribers: subReddit.subscribers as number,
     prefixedName: subReddit.display_name_prefixed as string
-  }
+  };
 }
+
+const initialState: RedditsState = {
+  reddits: [],
+  isLoading: false,
+  error: false,
+  subReddits: {}
+};
 
 export const StateContext = createContext({
   state: initialState,
@@ -81,14 +74,31 @@ export const reducer = (state: RedditsState, action: IAction) => {
     case ActionsTypes.REDDITS_ERROR:
     case ActionsTypes.SUB_REDDIT_ERROR:
       return { ...state, isLoading: false, error: true };
-    case ActionsTypes.REDDITS_FETCHED:      
-      const parsedReddits = parseFetchedData(get(action, ['payload', 'data', 'children']));
-      return { ...state, isLoading: false, error: false, reddits: parsedReddits };
+    case ActionsTypes.REDDITS_FETCHED:
+      const parsedReddits = parseFetchedData(
+        get(action, ["payload", "data", "children"])
+      );
+      return {
+        ...state,
+        isLoading: false,
+        error: false,
+        reddits: parsedReddits
+      };
     case ActionsTypes.SUB_REDDIT_FETCHED:
-      const fetchedData = get(action, ['payload', 'data']);
-      if (fetchedData) {
+      const fetchedData = get(action, ["payload", "data"]);
+      const subRedditName = get(fetchedData, "display_name");
+      if (fetchedData && subRedditName) {
         const subReddit = parseFetchedSubreddit(fetchedData);
-        return { ...state, isLoading: false, error: false, subReddits: { ...state.subReddits, [fetchedData.display_name]: subReddit} };
+
+        return {
+          ...state,
+          isLoading: false,
+          error: false,
+          subReddits: {
+            ...state.subReddits,
+            [subRedditName]: subReddit
+          }
+        };
       }
       return state;
     default:
