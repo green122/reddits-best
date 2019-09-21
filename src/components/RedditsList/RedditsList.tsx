@@ -1,38 +1,20 @@
-import React, { useContext, useEffect, Fragment } from "react";
-
+import React, { Fragment } from "react";
 import RedditListItem from "../RedditListItem/RedditListItem";
-import { StateContext } from "../../App";
-import { redditUrl } from "../../constants/api";
+
 import { amountOfReddits } from "../../constants/common";
-import { ActionsTypes, IReddit } from "../../models/reddit.model";
-import { fetchData } from "../../utils/fetchData";
-import { useStoreSelector } from "../../hooks/useStore.hook";
+import { IReddit } from "../../models/reddit.model";
 import { HomeTitle, HomeSubTitle, ListContainer } from "./RedditsList.style";
 import { ErrorMessage } from "../RedditDetails/RedditDetails.style";
 
-const redditsFetchActions = [
-  ActionsTypes.REDDITS_FETCHING,
-  ActionsTypes.REDDITS_FETCHED,
-  ActionsTypes.REDDITS_ERROR
-];
+import { injectService } from "../../HOC/injectService";
+import { useFetchRedditsList } from "./RedditsList.service";
 
-export default function RedditsList() {
-  const { dispatch } = useContext(StateContext);
-  const isError: boolean = useStoreSelector(state => state.error);
-  const reddits: IReddit[] = useStoreSelector(state => state.reddits);
-
-  useEffect(() => {
-    fetchData(
-      async () => {
-        const data = await fetch(redditUrl(amountOfReddits));
-        const parsed = await data.json();
-        return parsed;
-      },
-      dispatch,
-      redditsFetchActions
-    );
-  }, [dispatch]);
-
+export function RedditsList({
+  useFetchRedditsList
+}: {
+  useFetchRedditsList: () => { isError: boolean; reddits: IReddit[] };
+}) {
+  const { isError, reddits } = useFetchRedditsList();
   return (
     <Fragment>
       <HomeTitle>Home</HomeTitle>
@@ -49,3 +31,5 @@ export default function RedditsList() {
     </Fragment>
   );
 }
+
+export default injectService({ useFetchRedditsList })(RedditsList);

@@ -1,19 +1,21 @@
-import { Dispatch } from "react";
-import { IAction, ActionsTypes } from "../models/reddit.model";
+import { Dispatch} from "react";
+import { AnyAction, FetchActions } from "../models/reddit.model";
 
 export function fetchData(
   fetchFunction: () => Promise<any>,
-  dispatch: Dispatch<IAction>,
-  fetchActionsTypes: ActionsTypes[]
+  dispatch: Dispatch<AnyAction>,
+  fetchActionsTypes: FetchActions<any>
 ) {
-  const [startAction, successAction, failAction] = fetchActionsTypes;
-  dispatch({ type: startAction });
+  const [startActionType, successActionType, failActionType] = fetchActionsTypes;
+
+  
+  dispatch({ type: startActionType });
   const fetchResult = async () => {
     try {
       const result = await fetchFunction();
-      dispatch({ type: successAction, payload: result });
+      dispatch({ type: successActionType, payload: result });
     } catch (error) {
-      dispatch({ type: failAction, payload: error });
+      dispatch({ type: failActionType, payload: error });
     }
   };
 

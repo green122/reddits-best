@@ -7,7 +7,13 @@ export enum ActionsTypes {
     SUB_REDDIT_ERROR = "Sub Reddit Error",
   }
   
-  export interface IAction {
+  export interface AnyAction {
+    type: any;
+    payload?: any;
+  }
+
+  export type FetchActions<T> = T[];
+  export interface IAction  extends AnyAction {
     type: ActionsTypes;
     payload?: any;
   }
