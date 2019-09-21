@@ -12,12 +12,13 @@ import { useFetchRedditsList } from "./RedditsList.service";
 export function RedditsList({
   useFetchRedditsList
 }: {
-  useFetchRedditsList: () => { isError: boolean; reddits: IReddit[] };
+  useFetchRedditsList: () => { isError: boolean; reddits: IReddit[], refetch: () => void };
 }) {
-  const { isError, reddits } = useFetchRedditsList();
+  const { isError, reddits, refetch } = useFetchRedditsList();
   return (
     <Fragment>
-      <HomeTitle>Home</HomeTitle>
+      <HomeTitle>Home</HomeTitle> 
+      <button onClick={refetch}>Click me</button>     
       <HomeSubTitle>{`Top ${amountOfReddits} posts`}</HomeSubTitle>
       {isError ? (
         <ErrorMessage>Oops... Network error!</ErrorMessage>
